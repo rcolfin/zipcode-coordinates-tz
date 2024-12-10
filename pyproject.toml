@@ -1,0 +1,179 @@
+[tool.poetry]
+name = "zipcode-coordinates-tz"
+version = "0.1.0"
+description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
+authors = ["Robert Colfin <robert.m.colfin@gmail.com>"]
+readme = "README.md"
+license = "Apache"
+
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "License :: OSI Approved :: Apache Software License",
+    "Natural Language :: English",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+keywords = ["geolocation", "zipcodes", "census", "timezone", "timezone-converter", "postal-codes", "pytz","usps"]
+
+[tool.poetry.dependencies]
+python = "^3.10,<4.0"
+aiofiles = "^24.1.0"
+aiohttp = "^3.11.10"
+asyncclick = "^8.1.7.2"
+backoff = "^2.2.1"
+openpyxl = "^3.1.5"
+pytz = "^2024.2"
+timezonefinder = "^6.5.7"
+xlrd = "^2.0.1"
+pandas = "^2.2.3"
+
+[tool.poetry.group.dev.dependencies]
+mypy = "^1.11.2"
+ruff = "^0.6.9"
+pytest = "^8.3.3"
+pytest-cov = "^5.0.0"
+pytest-ruff = "^0.4.1"
+pytest-mypy = "^0.10.3"
+types-aiofiles = "^24.1.0.20240626"
+jupyter = "^1.1.1"
+pandas-stubs = "^2.2.3.241126"
+sphinx-material = "^0.0.36"
+
+[tool.ruff.lint.flake8-type-checking]
+runtime-evaluated-base-classes = ["pydantic.BaseModel", "sqlalchemy.orm.DeclarativeBase"]
+
+[[tool.mypy.overrides]]
+module = "docker.*"
+ignore_missing_imports = true
+
+[tool.pytest.ini_options]
+addopts = "--doctest-modules --mypy --ruff --ruff-format"
+
+[tool.ruff]
+# Exclude a variety of commonly ignored directories.
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "venv",
+]
+
+line-length = 150
+indent-width = 4
+target-version = "py310"
+namespace-packages = ["docs/source"]
+
+[tool.ruff.lint]
+select = [
+  "F",
+  "E",
+  "W",
+  "C90",
+  "I",
+  "N",
+  "UP",
+  "YTT",
+  "ANN",
+  "ASYNC",
+  "S",
+  "BLE",
+  "FBT",
+  "B",
+  "A",
+  "C4",
+  "DTZ",
+  "T10",
+  "EM",
+  "EXE",
+  "FA",
+  "ICN",
+  "G",
+  'INP',
+  'PIE',
+  "T20",
+  'PYI',
+  'PT',
+  "Q",
+  "RSE",
+  "RET",
+  "SLF",
+  "SLOT",
+  "SIM",
+  "TID",
+  "TCH",
+  "INT",
+  "PTH",
+  "ERA",
+  "PD",
+  "PGH",
+  "PL",
+  "TRY",
+  "FLY",
+  "PERF",
+  "RUF"
+]
+ignore = [
+  "N999",
+  "FBT002",
+  "FBT001",
+  "ANN101",
+  "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
+  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
+  "SIM102", # sometimes it's better to nest
+  "UP038", # Checks for uses of isinstance/issubclass that take a tuple
+          # of types for comparison.
+          # Deactivated because it can make the code slow:
+          # https://github.com/astral-sh/ruff/issues/7871
+  "TCH003",
+  "N805"
+]
+# Allow fix for all enabled rules (when `--fix`) is provided.
+fixable = ["ALL"]
+unfixable = []
+# The fixes in extend-unsafe-fixes will require
+# provide the `--unsafe-fixes` flag when fixing.
+extend-unsafe-fixes = [
+    "UP038"
+]
+# Allow unused variables when underscore-prefixed.
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
+
+[tool.ruff.lint.isort]
+force-single-line = false
+
+[tool.ruff.lint.per-file-ignores]
+"*.ipynb" = ["ERA001", "E402", "PLE1142", "T201"]
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.urls]
+homepage = "https://github.com/rcolfin/zipcode-coordinates-tz"
