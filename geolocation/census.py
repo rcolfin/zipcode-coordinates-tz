@@ -38,6 +38,12 @@ _GEOLOCATION_BATCH_COLUMNS = [
 ]
 
 
+def _fill_empty_rules(df: pd.DataFrame) -> pd.DataFrame:
+    df[constants.Columns.LATITUDE] = None
+    df[constants.Columns.LONGITUDE] = None
+    return df
+
+
 async def get_benchmarks() -> pd.DataFrame:
     """
     Queries for the benchmarks.
@@ -151,11 +157,15 @@ async def get_coordinates(
             4   Latitude    0 non-null      float64
             5   Longtitude  0 non-null      float64
     """
+    if df_zip_locals.empty:
+        return _fill_empty_rules(df_zip_locals)
+
     batch_size = min(MAX_BATCH_RECORDS, batch_size)
     params = {"benchmark": str(benchmark), "vintage": vintage}
     batch_cnt = max(1, len(df_zip_locals) // batch_size)
     logger.debug("Chunking %d rows into %d batch requests with %d rows each.", len(df_zip_locals), batch_cnt, batch_size)
 
+    df_zip_locals = df_zip_locals[[constants.Columns.STREET, constants.Columns.CITY, constants.Columns.STATE, constants.Columns.ZIPCODE]]
     df_coordinates_lst: list[pd.DataFrame] = []
     async with aiohttp.ClientSession() as session:
         for idx in range(0, len(df_zip_locals), batch_size):
@@ -185,20 +195,20 @@ async def get_coordinates(
                             names=_GEOLOCATION_BATCH_COLUMNS,
                             index_col=False,
                         )
+
                         df_geo = df_geo.set_index("ID")
                         df_geo = df_geo.loc[df_geo["Match"] == "Match"]
-                        df_geo["Longtitude"] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[0]))
-                        df_geo["Latitude"] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[1]))
-                        df_geo = df_geo[["Latitude", "Longtitude"]]
+                        df_geo[constants.Columns.LONGITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[0]))
+                        df_geo[constants.Columns.LATITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[1]))
+                        df_geo = df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]]
 
                         # Append the produced frame into the list
-                        df_coordinates_lst.append(df_geo[["Latitude", "Longtitude"]])
+                        df_coordinates_lst.append(df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]])
                 except aiohttp.client_exceptions.ClientResponseError:
                     logger.exception("Failed to download coordinates.")
 
     if not df_coordinates_lst:
-        msg = "No coordinates were queried"
-        raise ValueError(msg)
+        return _fill_empty_rules(df_zip_locals)
 
     # Concatenate all the dataframes then join by index with the original frame:
     df_coordinates = pd.concat(df_coordinates_lst)

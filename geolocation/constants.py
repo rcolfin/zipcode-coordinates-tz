@@ -14,3 +14,13 @@ DEFAULT_VINTAGE: Final[str] = "Current_Current"
 DEFAULT_TIMEZONE: Final[datetime.tzinfo] = pytz.timezone("America/New_York")
 
 TRUTHY: Final[frozenset[str]] = frozenset(["true", "1"])
+
+
+class Columns:
+    STREET: Final[str] = "Street"
+    CITY: Final[str] = "City"
+    STATE: Final[str] = "State"
+    ZIPCODE: Final[str] = "ZipCode"
+    LATITUDE: Final[str] = "Latitude"
+    LONGITUDE: Final[str] = "Longtitude"
+    TIMEZONE: Final[str] = "TZ"

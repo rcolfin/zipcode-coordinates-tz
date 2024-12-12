@@ -20,7 +20,11 @@ def _get_cached_timezone_finder() -> TimezoneFinder:
     return TimezoneFinder(bin_file_location=bin_file_location, in_memory=in_memory)
 
 
-def _get_timezone(latitude: float, longitude: float, timezone_finder: TimezoneFinder) -> datetime.tzinfo | None:
+def _get_timezone(latitude: float | None, longitude: float | None, timezone_finder: TimezoneFinder) -> datetime.tzinfo | None:
+    if latitude is None or longitude is None:
+        logger.warning("NONE!!!!!!!!!!!!!!!!!!!")
+        return None
+
     with contextlib.suppress(ValueError):
         zone = timezone_finder.timezone_at(lat=latitude, lng=longitude)
         if zone is not None:
@@ -58,9 +62,12 @@ def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = No
             5   Longtitude  0 non-null      float64
             6   TZ          0 non-null      object
     """
+    logger.debug("Filling in timezones into %d rows.", len(df))
+
     if timezone_finder is None:
         timezone_finder = _get_cached_timezone_finder()
 
-    logger.info("Filling in timezones into %d rows.", len(df))
-    df["TZ"] = df.apply(lambda row: _get_timezone(row.Latitude, row.Longtitude, timezone_finder), axis=1)
+    df[constants.Columns.TIMEZONE] = df.apply(
+        lambda row: _get_timezone(row[constants.Columns.LATITUDE], row[constants.Columns.LONGITUDE], timezone_finder), axis=1
+    )
     return df
