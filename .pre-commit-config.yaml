@@ -6,7 +6,7 @@ default_language_version:
 
 repos:
   - repo: https://github.com/rcolfin/pre-commit-hooks
-    rev: v0.1.1  # Use the ref you want to point at
+    rev: v0.1.2  # Use the ref you want to point at
     hooks:
       - id: mypy-linter
       - id: shellcheck-linter
