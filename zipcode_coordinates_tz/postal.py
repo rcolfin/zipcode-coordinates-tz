@@ -5,7 +5,7 @@ from typing import Final
 import aiohttp
 import pandas as pd
 
-from geolocation import constants, http
+from zipcode_coordinates_tz import constants, http
 
 logger = logging.getLogger(__name__)
 

@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 
-from geolocation.commands import cli
+from zipcode_coordinates_tz.commands import cli
 
 logger = logging.getLogger(__name__)
 

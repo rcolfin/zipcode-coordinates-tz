@@ -9,7 +9,7 @@ import aiohttp.client_exceptions
 import backoff
 from aiofiles import tempfile
 
-from geolocation import constants
+from zipcode_coordinates_tz import constants
 
 logger = logging.getLogger(__name__)
 

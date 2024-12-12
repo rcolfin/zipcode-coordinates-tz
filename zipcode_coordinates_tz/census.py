@@ -5,7 +5,7 @@ from typing import Final, cast
 import aiohttp
 import pandas as pd
 
-from geolocation import constants, http, models
+from zipcode_coordinates_tz import constants, http, models
 
 logger = logging.getLogger(__name__)
 
@@ -14,15 +14,15 @@ DEFAULT_BATCH_SIZE: Final[int] = 9500
 MAX_BATCH_RECORDS: Final[int] = 10000
 MAX_BATCH_BUFFER_SIZE: Final[int] = 5000000  # 5MB
 
-_GEOLOCATION_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/locations/address"
-_GEOLOCATION_BATCH_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/geographies/addressbatch"
+_CENSUS_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/locations/address"
+_CENSUS_BATCH_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/geographies/addressbatch"
 _BENCHMARKS_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/benchmarks"
 _VINTAGES_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/vintages"
 
 _BENCHMARK_RENAME_COLUMNS: Final[dict[str, str]] = {"isDefault": "Default", "benchmarkName": "Name", "benchmarkDescription": "Description"}
 _VINTAGE_RENAME_COLUMNS: Final[dict[str, str]] = {"isDefault": "Default", "vintageName": "Name", "vintageDescription": "Description"}
 _COLUMNS: Final[list[str]] = ["Name", "Description", "Default"]
-_GEOLOCATION_BATCH_COLUMNS = [
+_CENSUS_BATCH_COLUMNS = [
     "ID",  # Unique identifier from the input
     "Input Address",  # Original address string
     "Match",  # Match status (e.g., Match or No_Match)
@@ -113,7 +113,7 @@ async def get_address_coordinates(
         aiohttp.ClientSession() as session,
         http.get_json(
             session,
-            _GEOLOCATION_URL,
+            _CENSUS_URL,
             params,
         ) as data,
     ):
@@ -183,7 +183,7 @@ async def get_coordinates(
                 data.add_field("addressFile", f, filename=f"upload-{idx}.csv", content_type="text/csv")
 
                 try:
-                    async with http.post_and_download_file(session, _GEOLOCATION_BATCH_URL, params, data) as downloaded_file:
+                    async with http.post_and_download_file(session, _CENSUS_BATCH_URL, params, data) as downloaded_file:
                         logger.debug("Response received:\n%s", downloaded_file.read_text())
 
                         # Parse the downloaded file as a CSV:
@@ -192,12 +192,13 @@ async def get_coordinates(
                         df_geo = pd.read_csv(
                             downloaded_file,
                             sep=",",
-                            names=_GEOLOCATION_BATCH_COLUMNS,
+                            names=_CENSUS_BATCH_COLUMNS,
                             index_col=False,
                         )
 
                         df_geo = df_geo.set_index("ID")
                         df_geo = df_geo.loc[df_geo["Match"] == "Match"]
+                        logger.info("Matched %d out of %d", len(df_geo), len(chunk))
                         df_geo[constants.Columns.LONGITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[0]))
                         df_geo[constants.Columns.LATITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[1]))
                         df_geo = df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]]
@@ -212,4 +213,5 @@ async def get_coordinates(
 
     # Concatenate all the dataframes then join by index with the original frame:
     df_coordinates = pd.concat(df_coordinates_lst)
+    logger.debug("Joining %d with %d", len(df_zip_locals), len(df_coordinates))
     return df_zip_locals.join(df_coordinates)

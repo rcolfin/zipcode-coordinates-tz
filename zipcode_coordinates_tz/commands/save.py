@@ -6,8 +6,8 @@ from pathlib import Path
 
 import asyncclick as click
 
-from geolocation import census, constants, postal, timezone, utils
-from geolocation.commands.common import cli
+from zipcode_coordinates_tz import census, constants, postal, timezone, utils
+from zipcode_coordinates_tz.commands.common import cli
 
 logger = logging.getLogger(__name__)
 

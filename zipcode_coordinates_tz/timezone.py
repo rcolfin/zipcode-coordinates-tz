@@ -1,28 +1,24 @@
 import contextlib
 import datetime
 import logging
-import os
 from functools import cache
 
 import pandas as pd
 import pytz
 from timezonefinder import TimezoneFinder
 
-from geolocation import constants
+from zipcode_coordinates_tz import constants
 
 logger = logging.getLogger(__name__)
 
 
 @cache
 def _get_cached_timezone_finder() -> TimezoneFinder:
-    bin_file_location = os.getenv("TIMEZONE_FINDER_BIN_FILE_LOCATION")
-    in_memory = os.getenv("TIMEZONE_FINDER_IN_MEMORY", "").casefold() in constants.TRUTHY
-    return TimezoneFinder(bin_file_location=bin_file_location, in_memory=in_memory)
+    return TimezoneFinder(bin_file_location=constants.TIMEZONE_FINDER_BIN_FILE_LOCATION, in_memory=constants.TIMEZONE_FINDER_IN_MEMORY)
 
 
 def _get_timezone(latitude: float | None, longitude: float | None, timezone_finder: TimezoneFinder) -> datetime.tzinfo | None:
-    if latitude is None or longitude is None:
-        logger.warning("NONE!!!!!!!!!!!!!!!!!!!")
+    if pd.isna(latitude) or pd.isna(longitude):
         return None
 
     with contextlib.suppress(ValueError):
@@ -68,6 +64,7 @@ def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = No
         timezone_finder = _get_cached_timezone_finder()
 
     df[constants.Columns.TIMEZONE] = df.apply(
-        lambda row: _get_timezone(row[constants.Columns.LATITUDE], row[constants.Columns.LONGITUDE], timezone_finder), axis=1
+        lambda row: _get_timezone(row[constants.Columns.LATITUDE], row[constants.Columns.LONGITUDE], timezone_finder),
+        axis=1,
     )
     return df

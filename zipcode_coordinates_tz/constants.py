@@ -1,4 +1,5 @@
 import datetime
+import os
 from typing import Final
 
 import pytz
@@ -14,6 +15,9 @@ DEFAULT_VINTAGE: Final[str] = "Current_Current"
 DEFAULT_TIMEZONE: Final[datetime.tzinfo] = pytz.timezone("America/New_York")
 
 TRUTHY: Final[frozenset[str]] = frozenset(["true", "1"])
+
+TIMEZONE_FINDER_BIN_FILE_LOCATION: Final[str | None] = os.getenv("TIMEZONE_FINDER_BIN_FILE_LOCATION")
+TIMEZONE_FINDER_IN_MEMORY: Final[bool] = os.getenv("TIMEZONE_FINDER_IN_MEMORY", "").casefold() in TRUTHY
 
 
 class Columns:
