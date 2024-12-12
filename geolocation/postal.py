@@ -11,10 +11,10 @@ logger = logging.getLogger(__name__)
 
 
 _RENAME_COLUMNS: Final[dict[str, str]] = {
-    "PHYSICAL DELV ADDR": "Street",
-    "PHYSICAL CITY": "City",
-    "PHYSICAL STATE": "State",
-    "DELIVERY ZIPCODE": "ZipCode",
+    "PHYSICAL DELV ADDR": constants.Columns.STREET,
+    "PHYSICAL CITY": constants.Columns.CITY,
+    "PHYSICAL STATE": constants.Columns.STATE,
+    "DELIVERY ZIPCODE": constants.Columns.ZIPCODE,
 }
 _DTYPES: Final[dict[str, type]] = {
     "PHYSICAL DELV ADDR": str,
@@ -22,7 +22,7 @@ _DTYPES: Final[dict[str, type]] = {
     "PHYSICAL STATE": str,
     "DELIVERY ZIPCODE": str,
 }
-_TAKE_COLUMNS: Final[list[str]] = ["Street", "City", "State", "ZipCode"]
+_TAKE_COLUMNS: Final[list[str]] = [constants.Columns.STREET, constants.Columns.CITY, constants.Columns.STATE, constants.Columns.ZIPCODE]
 _SHEET_NAME: Final[str] = "ZIP_DETAIL"
 _URL_FMT: Final[str] = "https://postalpro.usps.com/mnt/glusterfs/{YEAR}-{MONTH}/ZIP_Locale_Detail.xls"
 
