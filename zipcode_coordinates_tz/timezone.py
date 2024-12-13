@@ -29,7 +29,7 @@ def _get_timezone(latitude: float | None, longitude: float | None, timezone_find
     return None
 
 
-def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = None) -> pd.DataFrame:
+def fill_timezones(df: pd.DataFrame, fill_missing: bool = True, timezone_finder: TimezoneFinder | None = None) -> pd.DataFrame:
     """
     Fills in the timezones for each coordinate in the specifeid DataFrame.
 
@@ -44,6 +44,10 @@ def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = No
             4   Latitude    0 non-null      float64
             5   Longitude  0 non-null      float64
 
+        fill_missing (bool): Flag indicating whether to fill in missing timezones by the closest match:
+            ZipCode, City, State
+            City, State
+            State.
         timezone_finder (TimezoneFinder | None): The optional TimezoneFinder instance to use.
 
     Returns:
@@ -55,7 +59,7 @@ def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = No
             2   State       0 non-null      object
             3   ZipCode     0 non-null      object
             4   Latitude    0 non-null      float64
-            5   Longitude  0 non-null      float64
+            5   Longitude   0 non-null      float64
             6   TZ          0 non-null      object
     """
     logger.debug("Filling in timezones into %d rows.", len(df))
@@ -67,4 +71,22 @@ def fill_timezones(df: pd.DataFrame, timezone_finder: TimezoneFinder | None = No
         lambda row: _get_timezone(row[constants.Columns.LATITUDE], row[constants.Columns.LONGITUDE], timezone_finder),
         axis=1,
     )
+
+    if fill_missing:
+        # This attempts to make a best effort at making sure that every row has a timezone.  It does this by filling based on the
+        # closest match; ie: ZipCode, City, State, then by City, State and finally by State.
+
+        df_before_no_tz = df[df.TZ.isna()]
+        df[constants.Columns.TIMEZONE] = (
+            df.groupby([constants.Columns.ZIPCODE, constants.Columns.CITY, constants.Columns.STATE])[constants.Columns.TIMEZONE]
+            .transform(lambda x: x.ffill().bfill())  # Fill using ZipCode first
+            .fillna(
+                df.groupby([constants.Columns.CITY, constants.Columns.STATE])[constants.Columns.TIMEZONE].transform(lambda x: x.ffill().bfill())
+            )  # Then City
+            .fillna(df.groupby([constants.Columns.STATE])[constants.Columns.TIMEZONE].transform(lambda x: x.ffill().bfill()))  # Then State
+        )
+
+        df_after_no_tz = df[df.TZ.isna()]
+        logger.debug("Filled in %d rows with their closest location.", len(df_before_no_tz) - len(df_after_no_tz))
+
     return df
