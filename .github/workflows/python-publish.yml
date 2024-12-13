@@ -65,6 +65,7 @@ jobs:
     - name: Validate Release Version
       shell: bash
       run: |
+        set -euox pipefail
         VERSION=$(poetry version --short)
         [ "${VERSION}" == "${TAG}" ] || { >&2 echo "Expected ${TAG} got ${VERSION}"; exit 1; }
       env:
