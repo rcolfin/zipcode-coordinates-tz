@@ -5,23 +5,47 @@ on:
     types: [created]
 
 jobs:
-  deploy:
+  setup:
+    if: github.event_name == 'release' && startsWith(github.ref, 'refs/tags/v')
+
     runs-on: ubuntu-latest
-    if: github.event_name == 'release'
+    outputs:
+      tag: ${{ steps.vars.outputs.tag }}
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Get the tag name for the release
+        id: vars
+        run: |
+            tag="${GITHUB_REF#refs/*/v}"  # refs/tags/v1.2.3 -> 1.2.3
+            echo "tag=$tag" >> $GITHUB_OUTPUT
+
+      - run: |
+          echo "tag=${{ steps.vars.outputs.tag }}"
+
+  deploy:
+    needs: [ setup ]
+    runs-on: ubuntu-latest
+
     steps:
     - name: Check out repository
       uses: actions/checkout@v4
+
     - name: Set up Python
       uses: actions/setup-python@v5
       with:
         python-version: '3.13'
+
     - name: Install Poetry
       uses: snok/install-poetry@v1
       with:
-        version: 1.8.3
+        version: latest
         virtualenvs-create: true
         virtualenvs-in-project: true
         installer-parallel: true
+
     - name: Load cached venv
       id: cached-poetry-dependencies
       uses: actions/cache@v4
@@ -30,11 +54,22 @@ jobs:
         key: venv-pypi-${{ runner.os }}-${{ steps.setup-python.outputs.python-version }}-${{ hashFiles(env.POETRY_LOCK_FILE) }}
       env:
           POETRY_LOCK_FILE: '${{ github.workspace }}/poetry.lock'
+
     - name: Install dependencies
       if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
       run: poetry install --no-interaction --no-root --no-dev
+
     - name: Install project
       run: poetry install --no-interaction
+
+    - name: Validate Release Version
+      shell: bash
+      run: |
+        VERSION=$(poetry version --short)
+        [ "${VERSION}" == "${TAG}" ] || { >&2 echo "Expected ${TAG} got ${VERSION}"; exit 1; }
+      env:
+        TAG: ${{ needs.setup.outputs.tag }}
+
     - name: publish
       shell: bash
       run: |

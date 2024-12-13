@@ -34,14 +34,14 @@ from zipcode_coordinates_tz import census, postal, timezone
 df_postal_locales = await postal.get_locales()
 df_postal_locales = df_postal_locales.loc[df_postal_locales.State == "NJ"]
 df_postal_locales = await census.get_coordinates(df_postal_locales)
-df_postal_locales = timezone.fill_timezones(df_postal_locales)
+df_postal_locales = timezone.fill_timezones(df_postal_locales, fill_missing=True)
 print(df_postal_locales)
 ```
 
 As a CLI
 
 ```sh
-python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones
+python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
 ```
 
 ## Installation

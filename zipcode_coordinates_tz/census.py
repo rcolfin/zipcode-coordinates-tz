@@ -198,7 +198,7 @@ async def get_coordinates(
 
                         df_geo = df_geo.set_index("ID")
                         df_geo = df_geo.loc[df_geo["Match"] == "Match"]
-                        logger.info("Matched %d out of %d", len(df_geo), len(chunk))
+                        logger.debug("Retrieved coordinates for %d out of %d", len(df_geo), len(chunk))
                         df_geo[constants.Columns.LONGITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[0]))
                         df_geo[constants.Columns.LATITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[1]))
                         df_geo = df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]]
