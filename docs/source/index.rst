@@ -56,11 +56,11 @@ column for the timezones.
     df_postal_locales = await postal.get_locales()
     df_postal_locales = df_postal_locales.loc[df_postal_locales.State == "NJ"]
     df_postal_locales = await census.get_coordinates(df_postal_locales)
-    df_postal_locales = timezone.fill_timezones(df_postal_locales)
+    df_postal_locales = timezone.fill_timezones(df_postal_locales, fill_missing=True)
     print(df_postal_locales)
 
 This example makes the same query as above, but saves it to a JSON file.
 
 .. code-block:: bash
 
-    python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones
+    python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
