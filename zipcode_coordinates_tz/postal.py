@@ -44,7 +44,7 @@ async def get_locales(date: datetime.date | None = None) -> pd.DataFrame:
             3   ZipCode  0 non-null      object
     """
     if date is None:
-        date = datetime.datetime.now(tz=constants.DEFAULT_TIMEZONE).date()
+        date = constants.get_date_in_ny()
     url = _URL_FMT.format(YEAR=date.year, MONTH=date.month)
     async with aiohttp.ClientSession() as session, http.get_and_download_file(session, url) as f:
         df_zip_locale = pd.read_excel(f, sheet_name=_SHEET_NAME, dtype=_DTYPES)

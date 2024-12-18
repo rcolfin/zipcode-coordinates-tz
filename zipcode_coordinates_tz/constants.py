@@ -28,3 +28,8 @@ class Columns:
     LATITUDE: Final[str] = "Latitude"
     LONGITUDE: Final[str] = "Longitude"
     TIMEZONE: Final[str] = "TZ"
+
+
+def get_date_in_ny() -> datetime.date:
+    """Gets the current date for the America/New_York timezone."""
+    return datetime.datetime.now(tz=DEFAULT_TIMEZONE).date()
