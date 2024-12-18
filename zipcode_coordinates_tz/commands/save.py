@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import logging
 from pathlib import Path
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Final
 
 import asyncclick as click
 
@@ -14,10 +14,12 @@ if TYPE_CHECKING:
 
 logger = logging.getLogger(__name__)
 
+DATE_TIME_FMT: Final[str] = "%Y-%m-%d"
+
 
 @cli.command("save")
 @click.argument("file", type=click.Path(dir_okay=False, writable=True))
-@click.option("--date", type=click.DateTime("%Y-%m-%d"), default=None)
+@click.option("--date", type=click.DateTime([DATE_TIME_FMT]), default=constants.get_date_in_ny().strftime(DATE_TIME_FMT))
 @click.option("--city", type=str.casefold, multiple=True, default=None, help="Filter on City or Town")
 @click.option("--state", type=str.upper, multiple=True, default=None, help="Filter on State")
 @click.option("--zipcode", type=str, multiple=True, default=None, help="Filter on Zipcode")
