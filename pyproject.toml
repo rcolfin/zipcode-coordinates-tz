@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "zipcode-coordinates-tz"
-version = "0.1.3"
+version = "0.2.0"
 description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
 authors = ["Robert Colfin <robert.m.colfin@gmail.com>"]
 readme = "README.md"
@@ -12,6 +12,7 @@ classifiers = [
     "License :: OSI Approved :: Apache Software License",
     "Natural Language :: English",
     "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3.9",
     "Programming Language :: Python :: 3.10",
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
@@ -20,7 +21,7 @@ classifiers = [
 keywords = ["geolocation", "zipcodes", "census", "timezone", "timezone-converter", "postal-codes", "pytz","usps"]
 
 [tool.poetry.dependencies]
-python = "^3.10,<4.0"
+python = "^3.9,<4.0"
 aiofiles = "^24.1.0"
 aiohttp = "^3.11.10"
 asyncclick = "^8.1.7.2"
@@ -29,7 +30,7 @@ openpyxl = "^3.1.5"
 pytz = "^2024.2"
 timezonefinder = "^6.5.7"
 xlrd = "^2.0.1"
-pandas = "^2.2.3"
+pandas = ">=1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"
@@ -40,7 +41,7 @@ pytest-ruff = "^0.4.1"
 pytest-mypy = "^0.10.3"
 types-aiofiles = "^24.1.0.20240626"
 types-pytz = "^2024.2.0.20241003"
-pandas-stubs = "^2.2.3.241126"
+pandas-stubs = ">=1"
 sphinx-material = "^0.0.36"
 jupyter = "^1.1.1"
 
@@ -77,7 +78,7 @@ exclude = [
 
 line-length = 150
 indent-width = 4
-target-version = "py310"
+target-version = "py39"
 namespace-packages = ["docs/source"]
 
 [tool.ruff.lint]
