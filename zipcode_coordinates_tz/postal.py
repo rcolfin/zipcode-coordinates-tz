@@ -1,11 +1,15 @@
-import datetime
+from __future__ import annotations
+
 import logging
-from typing import Final
+from typing import TYPE_CHECKING, Final
 
 import aiohttp
 import pandas as pd
 
 from zipcode_coordinates_tz import constants, http
+
+if TYPE_CHECKING:
+    import datetime
 
 logger = logging.getLogger(__name__)
 

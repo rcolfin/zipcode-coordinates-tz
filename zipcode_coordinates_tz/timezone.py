@@ -1,13 +1,19 @@
+from __future__ import annotations
+
 import contextlib
-import datetime
 import logging
 from functools import cache
+from typing import TYPE_CHECKING
 
 import pandas as pd
 import pytz
 from timezonefinder import TimezoneFinder
 
 from zipcode_coordinates_tz import constants
+
+if TYPE_CHECKING:
+    import datetime
+
 
 logger = logging.getLogger(__name__)
 
@@ -21,6 +27,8 @@ def _get_timezone(latitude: float | None, longitude: float | None, timezone_find
     if pd.isna(latitude) or pd.isna(longitude):
         return None
 
+    assert latitude is not None
+    assert longitude is not None
     with contextlib.suppress(ValueError):
         zone = timezone_finder.timezone_at(lat=latitude, lng=longitude)
         if zone is not None:

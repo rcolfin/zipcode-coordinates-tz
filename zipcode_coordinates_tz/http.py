@@ -1,8 +1,9 @@
+from __future__ import annotations
+
 import logging
-from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from pathlib import Path
-from typing import Any, cast
+from typing import TYPE_CHECKING, Any, cast
 
 import aiohttp
 import aiohttp.client_exceptions
@@ -10,6 +11,9 @@ import backoff
 from aiofiles import tempfile
 
 from zipcode_coordinates_tz import constants
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = logging.getLogger(__name__)
 
@@ -48,7 +52,7 @@ async def get_and_download_file(session: aiohttp.ClientSession, url: str) -> Asy
     logger.debug("Downloading %s", url)
     async with (
         session.get(url, raise_for_status=True) as response,
-        tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete_on_close=False) as f,
+        tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete=False) as f,
     ):
         download_path = Path(cast(str, f.name))
         logger.debug("Saving %s to %s", url, download_path)
@@ -82,7 +86,7 @@ async def post_and_download_file(session: aiohttp.ClientSession, url: str, param
     logger.debug("Downloading %s", url)
     async with (
         session.post(url, data=data, params=params, raise_for_status=True) as response,
-        tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete_on_close=False) as f,
+        tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete=False) as f,
     ):
         download_path = Path(cast(str, f.name))
         logger.debug("Saving %s to %s", url, download_path)
