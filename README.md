@@ -1,7 +1,8 @@
 # zipcode-coordinates-tz
 
 [![CI Build](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml/badge.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml)
-[![PyPI Version](https://img.shields.io/pypi/v/zipcode-coordinates-tz)](https://pypi.python.org/pypi/zipcode-coordinates-tz)
+[![License](https://img.shields.io/github/license/rcolfin/zipcode-coordinates-tz.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/LICENSE)
+[![PyPI Version](https://img.shields.io/pypi/v/zipcode-coordinates-tz)](https://pypi.zipcode-coordinates-tz.org/pypi/zipcode-coordinates-tz)
 [![versions](https://img.shields.io/pypi/pyversions/zipcode-coordinates-tz.svg)](ttps://github.com/rcolfin/zipcode-coordinates-tz)
 
 A Python package that enables converting a US Zip Code into a timezone.  This is done through the querying of the USPS API, then joining it with the zipcode-coordinates-tz data from the US Census, and finally taking the coordinates and using `timezonefinder` to determine the timezone.
@@ -28,7 +29,7 @@ Run [scripts/console.sh](../scripts/console.sh) poetry run jupyter notebook
 
 ## API Usage:
 
-```python
+```zipcode-coordinates-tz
 from zipcode_coordinates_tz import census, postal, timezone
 
 df_postal_locales = await postal.get_locales()
@@ -41,7 +42,7 @@ print(df_postal_locales)
 As a CLI
 
 ```sh
-python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
+zipcode-coordinates-tz -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
 ```
 
 ## Installation
