@@ -1,7 +1,7 @@
 # zipcode-coordinates-tz
 
 [![CI Build](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml/badge.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml)
-[![License](https://img.shields.io/github/license/rcolfin/zipcode-coordinates-tz.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/LICENSE)
+[![License](https://img.shields.io/github/license/rcolfin/zipcode-coordinates-tz.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/blob/main/LICENSE)
 [![PyPI Version](https://img.shields.io/pypi/v/zipcode-coordinates-tz)](https://pypi.zipcode-coordinates-tz.org/pypi/zipcode-coordinates-tz)
 [![versions](https://img.shields.io/pypi/pyversions/zipcode-coordinates-tz.svg)](ttps://github.com/rcolfin/zipcode-coordinates-tz)
 
