@@ -34,7 +34,7 @@ pandas = ">=1"
 
 [tool.poetry.group.dev.dependencies]
 mypy = "^1.11.2"
-ruff = "^0.8.3"
+ruff = "^0.9.0"
 pytest = "^8.3.3"
 pytest-cov = "^6.0.0"
 pytest-ruff = "^0.4.1"
@@ -131,6 +131,7 @@ select = [
   "RUF"
 ]
 ignore = [
+  "A005",
   "N999",
   "FBT002",
   "FBT001",
