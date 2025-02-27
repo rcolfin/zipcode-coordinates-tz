@@ -28,7 +28,7 @@ _DTYPES: Final[dict[str, type]] = {
 }
 _TAKE_COLUMNS: Final[list[str]] = [constants.Columns.STREET, constants.Columns.CITY, constants.Columns.STATE, constants.Columns.ZIPCODE]
 _SHEET_NAME: Final[str] = "ZIP_DETAIL"
-_URL_FMT: Final[str] = "https://postalpro.usps.com/mnt/glusterfs/{YEAR}-{MONTH}/ZIP_Locale_Detail.xls"
+_URL_FMT: Final[str] = "https://postalpro.usps.com/mnt/glusterfs/{YEAR:04}-{MONTH:02}/ZIP_Locale_Detail.xls"
 
 
 async def get_locales(date: datetime.date | None = None) -> pd.DataFrame:
