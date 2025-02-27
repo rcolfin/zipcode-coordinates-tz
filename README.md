@@ -42,7 +42,7 @@ print(df_postal_locales)
 As a CLI
 
 ```sh
-zipcode-coordinates-tz -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
+python -m zipcode_coordinates_tz save NJ.json --state NJ --timezones --fill
 ```
 
 ## Installation
