@@ -2,8 +2,8 @@
 
 [![CI Build](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml/badge.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/actions/workflows/ci.yml)
 [![License](https://img.shields.io/github/license/rcolfin/zipcode-coordinates-tz.svg)](https://github.com/rcolfin/zipcode-coordinates-tz/blob/main/LICENSE)
-[![PyPI Version](https://img.shields.io/pypi/v/zipcode-coordinates-tz)](https://pypi.zipcode-coordinates-tz.org/pypi/zipcode-coordinates-tz)
-[![versions](https://img.shields.io/pypi/pyversions/zipcode-coordinates-tz.svg)](ttps://github.com/rcolfin/zipcode-coordinates-tz)
+[![PyPI Version](https://img.shields.io/pypi/v/zipcode-coordinates-tz)](https://pypi.org/project/zipcode-coordinates-tz/)
+[![versions](https://img.shields.io/pypi/pyversions/zipcode-coordinates-tz.svg)](https://github.com/rcolfin/zipcode-coordinates-tz)
 
 A Python package that enables converting a US Zip Code into a timezone.  This is done through the querying of the USPS API, then joining it with the zipcode-coordinates-tz data from the US Census, and finally taking the coordinates and using `timezonefinder` to determine the timezone.
 
