@@ -1,6 +1,6 @@
 [project]
 name = "zipcode-coordinates-tz"
-version = "0.0.1"
+version = "0.3.0"
 description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
 authors = [
     {name = "Robert Colfin", email = "robert.m.colfin@gmail.com"},
