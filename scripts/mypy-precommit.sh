@@ -18,7 +18,7 @@ for PACKAGE_PATH in "${PACKAGE_PATHS[@]}"; do
     pushd "${PACKAGE_PATH}" >/dev/null ||  { FAILED+=("${PACKAGE_NAME}"); continue; }
 
     log "Running mypy $PWD"
-    poetry run "mypy" "." || { FAILED+=("${PACKAGE_NAME}"); }
+    uv run --frozen "mypy" "." || { FAILED+=("${PACKAGE_NAME}"); }
 
     popd >/dev/null || { continue; }
 done

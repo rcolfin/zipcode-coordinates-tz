@@ -16,7 +16,13 @@ A Python package that enables converting a US Zip Code into a timezone.  This is
 
 ### Setup Python Environment:
 
-Run [scripts/console.sh](../scripts/console.sh) poetry install
+Run [scripts/console.sh](../scripts/console.sh)
+
+The first time run
+
+```sh
+uvx pre-commit install
+```
 
 ### If you need to relock:
 
@@ -24,7 +30,7 @@ Run [scripts/lock.sh](../scripts/lock.sh)
 
 ### Run code
 
-Run [scripts/console.sh](../scripts/console.sh) poetry run jupyter notebook
+Run [scripts/console.sh](../scripts/console.sh) uv run jupyter notebook
 
 
 ## API Usage:

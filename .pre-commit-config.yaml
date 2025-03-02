@@ -6,11 +6,11 @@ default_language_version:
 
 repos:
   - repo: https://github.com/rcolfin/pre-commit-hooks
-    rev: v0.2.0
+    rev: v0.3.1
     hooks:
       - id: mypy-linter
       - id: shellcheck-linter
-      - id: poetry-check
+      - id: uv-check
 
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v5.0.0
