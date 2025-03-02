@@ -52,8 +52,6 @@ jobs:
       - name: Sphinx build
         run: |
           uv run --frozen sphinx-build docs/source _build
-        env:
-            UV_PYTHON: ${{ matrix.python-version }}
 
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
