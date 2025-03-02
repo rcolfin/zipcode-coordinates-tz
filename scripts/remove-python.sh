@@ -6,6 +6,7 @@ PATHS_TO_REMOVE=(
     ~/.cache/conda
     ~/.cache/pip
     ~/.cache/pypoetry
+    ~/.cache/uv
     ~/.local/bin/micromamba
     ~/micromamba
 )
