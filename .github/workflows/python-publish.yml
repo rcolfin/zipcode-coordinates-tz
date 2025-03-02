@@ -28,8 +28,6 @@ jobs:
   deploy:
     needs: [ setup ]
     runs-on: ubuntu-latest
-    env:
-      UV_PYTHON: "3.9"
     strategy:
       fail-fast: false
       matrix:
