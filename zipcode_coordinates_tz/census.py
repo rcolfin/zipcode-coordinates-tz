@@ -173,7 +173,7 @@ async def get_coordinates(
         for idx in range(0, len(df_zip_locals), batch_size):
             chunk = df_zip_locals[idx : idx + batch_size]
             with io.BytesIO() as f:
-                cast(pd.DataFrame, chunk).to_csv(f, header=False, encoding="utf-8")
+                cast("pd.DataFrame", chunk).to_csv(f, header=False, encoding="utf-8")
                 f.seek(0)
 
                 assert len(chunk) < MAX_BATCH_RECORDS, f"{len(chunk)} >= {MAX_BATCH_RECORDS}"

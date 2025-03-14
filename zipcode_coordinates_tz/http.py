@@ -54,7 +54,7 @@ async def get_and_download_file(session: aiohttp.ClientSession, url: str) -> Asy
         session.get(url, raise_for_status=True) as response,
         tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete=False) as f,
     ):
-        download_path = Path(cast(str, f.name))
+        download_path = Path(cast("str", f.name))
         logger.debug("Saving %s to %s", url, download_path)
         async for chunk in response.content.iter_chunked(constants.BUFFER_LENGTH):
             await f.write(chunk)
@@ -88,7 +88,7 @@ async def post_and_download_file(session: aiohttp.ClientSession, url: str, param
         session.post(url, data=data, params=params, raise_for_status=True) as response,
         tempfile.NamedTemporaryFile(prefix=url_path.with_suffix("").name, suffix=url_path.suffix, delete=False) as f,
     ):
-        download_path = Path(cast(str, f.name))
+        download_path = Path(cast("str", f.name))
         logger.debug("Saving %s to %s", url, download_path)
         async for chunk in response.content.iter_chunked(constants.BUFFER_LENGTH):
             await f.write(chunk)
