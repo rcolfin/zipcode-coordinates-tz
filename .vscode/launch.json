@@ -1,0 +1,22 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug save",
+            "type": "debugpy",
+            "request": "launch",
+            "module": "zipcode_coordinates_tz",
+            "args": [
+                "save",
+                "tests/data/nj.csv",
+                "--date",
+                "2025-08-26",
+                "--state",
+                "NJ",
+                "--coordinates",
+                "--timezones",
+                "--fill"
+            ]
+        }
+    ]
+}

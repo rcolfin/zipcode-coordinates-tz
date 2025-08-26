@@ -1,6 +1,6 @@
 [project]
 name = "zipcode-coordinates-tz"
-version = "0.3.0"
+version = "0.4.0"
 description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
 authors = [
     {name = "Robert Colfin", email = "robert.m.colfin@gmail.com"},
@@ -33,14 +33,14 @@ keywords = [
 requires-python = "<4.0,>=3.9"
 dependencies = [
     "aiofiles<25.0.0,>=24.1.0",
-    "aiohttp<4.0.0,>=3.11.10",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "backoff<3.0.0,>=2.2.1",
+    "curl-cffi>=0.13.0",
     "openpyxl<4.0.0,>=3.1.5",
     "pytz<2026.0,>=2024.2",
     "timezonefinder>=6.5.7,<8.0.0",
     "xlrd<3.0.0,>=2.0.1",
-    "pandas>=1",
+    "pandas>=1"
 ]
 
 [dependency-groups]
@@ -141,18 +141,7 @@ select = [
   "RUF"
 ]
 ignore = [
-  "A005",
-  "N999",
-  "FBT002",
-  "FBT001",
-  "S101", # Use of assert detected https://docs.astral.sh/ruff/rules/assert/
-  "RUF012", # Mutable class attributes should be annotated with `typing.ClassVar`
-  "SIM102", # sometimes it's better to nest
-  "UP038", # Checks for uses of isinstance/issubclass that take a tuple
-          # of types for comparison.
-          # Deactivated because it can make the code slow:
-          # https://github.com/astral-sh/ruff/issues/7871
-  "N805"
+
 ]
 # Allow fix for all enabled rules (when `--fix`) is provided.
 fixable = ["ALL"]

@@ -2,10 +2,11 @@ from __future__ import annotations
 
 import io
 import logging
-from typing import Final, cast
+from typing import Final
 
-import aiohttp
+import curl_cffi
 import pandas as pd
+from curl_cffi import requests
 
 from zipcode_coordinates_tz import constants, http, models
 
@@ -46,6 +47,14 @@ def _fill_empty_rules(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
+def _extract_longitude(coord: str) -> float:
+    return float(coord.split(",")[0])
+
+
+def _extract_latitude(coord: str) -> float:
+    return float(coord.split(",")[1])
+
+
 async def get_benchmarks() -> pd.DataFrame:
     """
     Queries for the benchmarks.
@@ -59,7 +68,7 @@ async def get_benchmarks() -> pd.DataFrame:
             2   Default      0 non-null      bool
     """
     async with (
-        aiohttp.ClientSession() as session,
+        requests.AsyncSession() as session,
         http.get_json(
             session,
             _BENCHMARKS_URL,
@@ -85,7 +94,7 @@ async def get_vintages(benchmark: models.Benchmark | str = models.Benchmark.Publ
     """
     params = {"benchmark": str(benchmark)}
     async with (
-        aiohttp.ClientSession() as session,
+        requests.AsyncSession() as session,
         http.get_json(
             session,
             _VINTAGES_URL,
@@ -112,7 +121,7 @@ async def get_address_coordinates(
     """
     params = {"format": "json", "benchmark": str(benchmark), "street": street, "city": city, "state": state, "zip": zip_code}
     async with (
-        aiohttp.ClientSession() as session,
+        requests.AsyncSession() as session,
         http.get_json(
             session,
             _CENSUS_URL,
@@ -169,23 +178,29 @@ async def get_coordinates(
 
     df_zip_locals = df_zip_locals[[constants.Columns.STREET, constants.Columns.CITY, constants.Columns.STATE, constants.Columns.ZIPCODE]]
     df_coordinates_lst: list[pd.DataFrame] = []
-    async with aiohttp.ClientSession() as session:
+    async with requests.AsyncSession() as session:
         for idx in range(0, len(df_zip_locals), batch_size):
             chunk = df_zip_locals[idx : idx + batch_size]
             with io.BytesIO() as f:
-                cast("pd.DataFrame", chunk).to_csv(f, header=False, encoding="utf-8")
+                chunk.to_csv(f, header=False, encoding="utf-8")
                 f.seek(0)
 
-                assert len(chunk) < MAX_BATCH_RECORDS, f"{len(chunk)} >= {MAX_BATCH_RECORDS}"
-                assert f.getbuffer().nbytes < MAX_BATCH_BUFFER_SIZE, f"{f.getbuffer().nbytes} < {MAX_BATCH_BUFFER_SIZE}"
+                assert len(chunk) < MAX_BATCH_RECORDS, f"{len(chunk)} >= {MAX_BATCH_RECORDS}"  # noqa: S101
+                assert f.getbuffer().nbytes < MAX_BATCH_BUFFER_SIZE, f"{f.getbuffer().nbytes} < {MAX_BATCH_BUFFER_SIZE}"  # noqa: S101
                 logger.debug("Sending request with csv file:\n%s", f.read().decode())
 
                 f.seek(0)
-                data = aiohttp.FormData()
-                data.add_field("addressFile", f, filename=f"upload-{idx}.csv", content_type="text/csv")
+
+                mp = curl_cffi.CurlMime()
+                mp.addpart(
+                    name="addressFile",  # form field name
+                    content_type="text/csv",  # mime type
+                    filename=f"upload-{idx}.csv",  # filename seen by remote server
+                    data=f.read(),  # file-like object or bytes
+                )
 
                 try:
-                    async with http.post_and_download_file(session, _CENSUS_BATCH_URL, params, data) as downloaded_file:
+                    async with http.post_and_download_file(session, _CENSUS_BATCH_URL, params, mp) as downloaded_file:
                         logger.debug("Response received:\n%s", downloaded_file.read_text())
 
                         # Parse the downloaded file as a CSV:
@@ -201,13 +216,13 @@ async def get_coordinates(
                         df_geo = df_geo.set_index("ID")
                         df_geo = df_geo.loc[df_geo["Match"] == "Match"]
                         logger.debug("Retrieved coordinates for %d out of %d", len(df_geo), len(chunk))
-                        df_geo[constants.Columns.LONGITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[0]))
-                        df_geo[constants.Columns.LATITUDE] = df_geo["Coordinates"].apply(lambda x: float(x.split(",")[1]))
+                        df_geo[constants.Columns.LONGITUDE] = df_geo["Coordinates"].apply(_extract_longitude)
+                        df_geo[constants.Columns.LATITUDE] = df_geo["Coordinates"].apply(_extract_latitude)
                         df_geo = df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]]
 
                         # Append the produced frame into the list
                         df_coordinates_lst.append(df_geo[[constants.Columns.LATITUDE, constants.Columns.LONGITUDE]])
-                except aiohttp.client_exceptions.ClientResponseError:
+                except requests.exceptions.RequestException:
                     logger.exception("Failed to download coordinates.")
 
     if not df_coordinates_lst:
