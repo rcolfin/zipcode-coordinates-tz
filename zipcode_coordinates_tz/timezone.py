@@ -10,6 +10,7 @@ import pytz
 from timezonefinder import TimezoneFinder
 
 from zipcode_coordinates_tz import constants
+from zipcode_coordinates_tz.models import FillMissing
 
 if TYPE_CHECKING:
     import datetime
@@ -27,8 +28,8 @@ def _get_timezone(latitude: float | None, longitude: float | None, timezone_find
     if pd.isna(latitude) or pd.isna(longitude):
         return None
 
-    assert latitude is not None
-    assert longitude is not None
+    assert latitude is not None  # noqa: S101
+    assert longitude is not None  # noqa: S101
     with contextlib.suppress(ValueError):
         zone = timezone_finder.timezone_at(lat=latitude, lng=longitude)
         if zone is not None:
@@ -37,7 +38,11 @@ def _get_timezone(latitude: float | None, longitude: float | None, timezone_find
     return None
 
 
-def fill_timezones(df: pd.DataFrame, fill_missing: bool = True, timezone_finder: TimezoneFinder | None = None) -> pd.DataFrame:
+def fill_timezones(
+    df: pd.DataFrame,
+    fill_missing: FillMissing | bool = FillMissing.ENABLED,  # noqa: FBT001
+    timezone_finder: TimezoneFinder | None = None,
+) -> pd.DataFrame:
     """
     Fills in the timezones for each coordinate in the specifeid DataFrame.
 
@@ -52,7 +57,7 @@ def fill_timezones(df: pd.DataFrame, fill_missing: bool = True, timezone_finder:
             4   Latitude    0 non-null      float64
             5   Longitude  0 non-null      float64
 
-        fill_missing (bool): Flag indicating whether to fill in missing timezones by the closest match:
+        fill_missing (FillMissing): Flag indicating whether to fill in missing timezones by the closest match:
             ZipCode, City, State
             City, State
             State.
@@ -76,11 +81,16 @@ def fill_timezones(df: pd.DataFrame, fill_missing: bool = True, timezone_finder:
         timezone_finder = _get_cached_timezone_finder()
 
     df[constants.Columns.TIMEZONE] = df.apply(
-        lambda row: _get_timezone(row[constants.Columns.LATITUDE], row[constants.Columns.LONGITUDE], timezone_finder),
+        lambda row: _get_timezone(
+            float(row[constants.Columns.LATITUDE]) if not pd.isna(row[constants.Columns.LATITUDE]) else None,
+            float(row[constants.Columns.LONGITUDE]) if not pd.isna(row[constants.Columns.LONGITUDE]) else None,
+            timezone_finder,
+        ),
         axis=1,
+        result_type="expand",
     )
 
-    if fill_missing:
+    if fill_missing is True or fill_missing == FillMissing.ENABLED:
         # This attempts to make a best effort at making sure that every row has a timezone.  It does this by filling based on the
         # closest match; ie: ZipCode, City, State, then by City, State and finally by State.
 

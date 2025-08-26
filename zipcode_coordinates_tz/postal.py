@@ -3,8 +3,8 @@ from __future__ import annotations
 import logging
 from typing import TYPE_CHECKING, Final
 
-import aiohttp
 import pandas as pd
+from curl_cffi import requests
 
 from zipcode_coordinates_tz import constants, http
 
@@ -50,7 +50,7 @@ async def get_locales(date: datetime.date | None = None) -> pd.DataFrame:
     if date is None:
         date = constants.get_date_in_ny()
     url = _URL_FMT.format(YEAR=date.year, MONTH=date.month)
-    async with aiohttp.ClientSession() as session, http.get_and_download_file(session, url) as f:
+    async with requests.AsyncSession() as session, http.get_and_download_file(session, url) as f:
         df_zip_locale = pd.read_excel(f, sheet_name=_SHEET_NAME, dtype=_DTYPES)
         return df_zip_locale.rename(
             columns=_RENAME_COLUMNS,

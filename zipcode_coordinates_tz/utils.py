@@ -9,14 +9,17 @@ logger = logging.getLogger(__name__)
 
 
 def _save_csv(df: pd.DataFrame, file: Path) -> None:
+    file.parent.mkdir(parents=True, exist_ok=True)
     df.to_csv(file, index=False)
 
 
 def _save_json(df: pd.DataFrame, file: Path) -> None:
+    file.parent.mkdir(parents=True, exist_ok=True)
     df.to_json(file, orient="records", index=False)
 
 
 def _save_excel(df: pd.DataFrame, file: Path) -> None:
+    file.parent.mkdir(parents=True, exist_ok=True)
     df.to_excel(file, index=False)
 
 

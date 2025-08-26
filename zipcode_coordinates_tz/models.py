@@ -1,4 +1,4 @@
-from enum import Enum
+from enum import Enum, IntEnum
 from typing import NamedTuple
 
 
@@ -14,3 +14,11 @@ class Benchmark(str, Enum):
 
     def __str__(self) -> str:
         return self.value
+
+
+class FillMissing(IntEnum):
+    DISABLED = 0
+    ENABLED = 1
+
+    def __str__(self) -> str:
+        return str(self.name)

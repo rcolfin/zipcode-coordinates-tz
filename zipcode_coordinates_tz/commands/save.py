@@ -8,6 +8,7 @@ import asyncclick as click
 
 from zipcode_coordinates_tz import census, constants, postal, timezone, utils
 from zipcode_coordinates_tz.commands.common import cli
+from zipcode_coordinates_tz.models import FillMissing
 
 if TYPE_CHECKING:
     import datetime
@@ -37,9 +38,9 @@ async def save(  # noqa: PLR0913
     city: tuple[str, ...],
     state: tuple[str, ...] | None,
     zipcode: tuple[str, ...],
-    coordinates: bool,
-    timezones: bool,
-    fill: bool,
+    coordinates: bool,  # noqa: FBT001
+    timezones: bool,  # noqa: FBT001
+    fill: bool,  # noqa: FBT001
 ) -> None:
     df_postal_locales = await postal.get_locales(date)
     logger.info("Query for locales returned %d rows.", len(df_postal_locales))
@@ -61,7 +62,7 @@ async def save(  # noqa: PLR0913
         df_postal_locales = await census.get_coordinates(df_postal_locales)
 
     if timezones:
-        df_postal_locales = timezone.fill_timezones(df_postal_locales, fill_missing=fill)
+        df_postal_locales = timezone.fill_timezones(df_postal_locales, fill_missing=FillMissing.ENABLED if fill else FillMissing.DISABLED)
 
         df_postal_locales_missing_tz = df_postal_locales[df_postal_locales[constants.Columns.TIMEZONE].isna()]
         if not df_postal_locales_missing_tz.empty:

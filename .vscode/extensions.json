@@ -1,0 +1,7 @@
+{
+    "recommendations": [
+        "github.vscode-github-actions",
+        "charliermarsh.ruff",
+        "ms-python.python"
+    ]
+}
