@@ -38,7 +38,7 @@ dependencies = [
     "curl-cffi>=0.13.0",
     "openpyxl<4.0.0,>=3.1.5",
     "pytz<2026.0,>=2024.2",
-    "timezonefinder>=6.5.7,<8.0.0",
+    "timezonefinder>=6.5.7,<9.0.0",
     "xlrd<3.0.0,>=2.0.1",
     "pandas>=1"
 ]
