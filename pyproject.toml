@@ -1,6 +1,6 @@
 [project]
 name = "zipcode-coordinates-tz"
-version = "0.4.0"
+version = "0.4.1"
 description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
 authors = [
     {name = "Robert Colfin", email = "robert.m.colfin@gmail.com"},
@@ -19,6 +19,7 @@ classifiers = [
     "Programming Language :: Python :: 3.11",
     "Programming Language :: Python :: 3.12",
     "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
 ]
 keywords = [
     "geolocation",
@@ -34,13 +35,13 @@ requires-python = "<4.0,>=3.9"
 dependencies = [
     "aiofiles<25.0.0,>=24.1.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
-    "backoff<3.0.0,>=2.2.1",
     "curl-cffi>=0.13.0",
     "openpyxl<4.0.0,>=3.1.5",
     "pytz<2026.0,>=2024.2",
     "timezonefinder>=6.5.7,<9.0.0",
     "xlrd<3.0.0,>=2.0.1",
-    "pandas>=1"
+    "pandas>=1",
+    "tenacity>=9.1.2",
 ]
 
 [dependency-groups]

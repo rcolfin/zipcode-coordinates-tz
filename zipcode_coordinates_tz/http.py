@@ -5,10 +5,10 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, cast
 
-import backoff
 import curl_cffi
 from aiofiles import tempfile
 from curl_cffi import requests
+from tenacity import retry, retry_if_exception, stop_after_attempt, stop_after_delay, wait_exponential
 
 from zipcode_coordinates_tz import constants
 
@@ -18,7 +18,16 @@ if TYPE_CHECKING:
 logger = logging.getLogger(__name__)
 
 
-@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=constants.MAX_RETRIES, max_time=constants.MAX_RETRY_TIME)
+def _is_request_exception(e: BaseException) -> bool:
+    """Returns True if the exception is a requests exception."""
+    return isinstance(e, requests.exceptions.RequestException)
+
+
+@retry(
+    retry=retry_if_exception(_is_request_exception),
+    wait=wait_exponential(),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+)
 @asynccontextmanager
 async def get_json(session: requests.AsyncSession, url: str, params: dict[str, Any] | None = None) -> AsyncIterator[dict[str, Any]]:
     """
@@ -37,7 +46,11 @@ async def get_json(session: requests.AsyncSession, url: str, params: dict[str, A
     yield data
 
 
-@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=constants.MAX_RETRIES, max_time=constants.MAX_RETRY_TIME)
+@retry(
+    retry=retry_if_exception(_is_request_exception),
+    wait=wait_exponential(),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+)
 @asynccontextmanager
 async def get_and_download_file(session: requests.AsyncSession, url: str) -> AsyncIterator[Path]:
     """
@@ -70,7 +83,11 @@ async def get_and_download_file(session: requests.AsyncSession, url: str) -> Asy
                 download_path.unlink()
 
 
-@backoff.on_exception(backoff.expo, requests.exceptions.RequestException, max_tries=constants.MAX_RETRIES, max_time=constants.MAX_RETRY_TIME)
+@retry(
+    retry=retry_if_exception(_is_request_exception),
+    wait=wait_exponential(),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+)
 @asynccontextmanager
 async def post_and_download_file(session: requests.AsyncSession, url: str, params: dict[str, Any], mp: curl_cffi.CurlMime) -> AsyncIterator[Path]:
     """
