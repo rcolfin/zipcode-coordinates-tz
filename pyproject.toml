@@ -33,7 +33,7 @@ keywords = [
 ]
 requires-python = "<4.0,>=3.9"
 dependencies = [
-    "aiofiles<25.0.0,>=24.1.0",
+    "aiofiles>=24.1.0,<26.0.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "curl-cffi>=0.13.0",
     "openpyxl<4.0.0,>=3.1.5",
