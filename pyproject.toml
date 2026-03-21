@@ -1,6 +1,6 @@
 [project]
 name = "zipcode-coordinates-tz"
-version = "0.4.1"
+version = "0.5.0"
 description = "A Python package for querying US Zipcodes, and converting to coordinates and timezones"
 authors = [
     {name = "Robert Colfin", email = "robert.m.colfin@gmail.com"},
@@ -33,11 +33,11 @@ keywords = [
 ]
 requires-python = "<4.0,>=3.9"
 dependencies = [
-    "aiofiles>=24.1.0,<26.0.0",
+    "aiofiles<26.0.0,>=25.1.0",
     "asyncclick<9.0.0.0,>=8.1.7.2",
     "curl-cffi>=0.13.0",
     "openpyxl<4.0.0,>=3.1.5",
-    "pytz<2026.0,>=2024.2",
+    "pytz<2027.0,>=2024.2",
     "timezonefinder>=6.5.7,<9.0.0",
     "xlrd<3.0.0,>=2.0.1",
     "pandas>=1",
@@ -51,9 +51,10 @@ dev = [
     "pytest<9.0.0,>=8.3.3",
     "pytest-cov>=6.0.0,<8.0.0",
     "pytest-ruff<1.0.0,>=0.4.1",
+    "pytest-asyncio>=0.24,<2.0.0",
     "pytest-mypy>=0.10.3,<2.0.0",
-    "types-aiofiles>=24.1.0.20240626,<26.0.0.0",
-    "types-pytz<2026.0.0.0,>=2024.2.0.20241003",
+    "types-aiofiles<26.0.0.0,>=25.1.0.20251011",
+    "types-pytz<2027.0.0.0,>=2024.2.0.20241003",
     "pandas-stubs>=1",
     "sphinx-material<1.0.0,>=0.0.36",
     "jupyter<2.0.0,>=1.1.1",
@@ -166,6 +167,8 @@ force-single-line = false
 
 [tool.ruff.lint.per-file-ignores]
 "*.ipynb" = ["ERA001", "E402", "PLE1142", "T201"]
+"tests/**/*.py" = ["S101", "ANN", "SLF001", "PLR2004", "FBT001"]
+"zipcode_coordinates_tz/http.py" = ["ASYNC240"]
 
 [tool.uv]
 python-downloads = "manual"

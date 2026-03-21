@@ -25,7 +25,7 @@ _VINTAGES_URL: Final[str] = "https://geocoding.geo.census.gov/geocoder/vintages"
 _BENCHMARK_RENAME_COLUMNS: Final[dict[str, str]] = {"isDefault": "Default", "benchmarkName": "Name", "benchmarkDescription": "Description"}
 _VINTAGE_RENAME_COLUMNS: Final[dict[str, str]] = {"isDefault": "Default", "vintageName": "Name", "vintageDescription": "Description"}
 _COLUMNS: Final[list[str]] = ["Name", "Description", "Default"]
-_CENSUS_BATCH_COLUMNS = [
+_CENSUS_BATCH_COLUMNS: Final[list[str]] = [
     "ID",  # Unique identifier from the input
     "Input Address",  # Original address string
     "Match",  # Match status (e.g., Match or No_Match)
@@ -48,11 +48,11 @@ def _fill_empty_rules(df: pd.DataFrame) -> pd.DataFrame:
 
 
 def _extract_longitude(coord: str) -> float:
-    return float(coord.split(",")[0])
+    return float(coord.split(",", maxsplit=1)[0])
 
 
 def _extract_latitude(coord: str) -> float:
-    return float(coord.split(",")[1])
+    return float(coord.split(",", maxsplit=1)[1])
 
 
 async def get_benchmarks() -> pd.DataFrame:
@@ -74,7 +74,7 @@ async def get_benchmarks() -> pd.DataFrame:
             _BENCHMARKS_URL,
         ) as data,
     ):
-        return pd.DataFrame(data.get("benchmarks", [])).rename(columns=_BENCHMARK_RENAME_COLUMNS)[_COLUMNS]
+        return pd.DataFrame(data.get("benchmarks", [])).rename(columns=_BENCHMARK_RENAME_COLUMNS).reindex(columns=_COLUMNS)
 
 
 async def get_vintages(benchmark: models.Benchmark | str = models.Benchmark.Public_AR_CURRENT) -> pd.DataFrame:
@@ -101,7 +101,7 @@ async def get_vintages(benchmark: models.Benchmark | str = models.Benchmark.Publ
             params,
         ) as data,
     ):
-        return pd.DataFrame(data.get("vintages", [])).rename(columns=_VINTAGE_RENAME_COLUMNS)[_COLUMNS]
+        return pd.DataFrame(data.get("vintages", [])).rename(columns=_VINTAGE_RENAME_COLUMNS).reindex(columns=_COLUMNS)
 
 
 async def get_address_coordinates(
@@ -112,7 +112,8 @@ async def get_address_coordinates(
 
     Args:
         street (str): The street address.
-        city (str): The city
+        city (str): The city.
+        state (str): The two-letter state abbreviation.
         zip_code (str): The zip code.
         benchmark (models.Benchmark | str): The benchmark value (see get_benchmarks for possible values).
 
@@ -130,7 +131,7 @@ async def get_address_coordinates(
     ):
         address_matches = data.get("result", {}).get("addressMatches", [])
         coordinates = [
-            models.Coordinate(float(am["coordinates"]["x"]), float(am["coordinates"]["y"])) for am in address_matches if "coordinates" in am
+            models.Coordinate(float(am["coordinates"]["y"]), float(am["coordinates"]["x"])) for am in address_matches if "coordinates" in am
         ]
         return coordinates[0] if coordinates else None
 

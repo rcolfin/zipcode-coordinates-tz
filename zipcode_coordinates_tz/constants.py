@@ -8,7 +8,7 @@ import pytz
 
 MAX_RETRIES: Final[int] = 3
 
-MAX_RETRY_TIME: Final[int] = 60
+MAX_RETRIES_TIME: Final[int] = 60
 
 BUFFER_LENGTH: Final[int] = 1024
 
@@ -23,6 +23,8 @@ TIMEZONE_FINDER_IN_MEMORY: Final[bool] = os.getenv("TIMEZONE_FINDER_IN_MEMORY", 
 
 
 class Columns:
+    """DataFrame column name constants used throughout the package."""
+
     STREET: Final[str] = "Street"
     CITY: Final[str] = "City"
     STATE: Final[str] = "State"

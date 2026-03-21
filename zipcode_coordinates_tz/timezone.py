@@ -80,14 +80,13 @@ def fill_timezones(
     if timezone_finder is None:
         timezone_finder = _get_cached_timezone_finder()
 
-    df[constants.Columns.TIMEZONE] = df.apply(
+    df[constants.Columns.TIMEZONE] = df.apply(  # type: ignore[call-overload]
         lambda row: _get_timezone(
             float(row[constants.Columns.LATITUDE]) if not pd.isna(row[constants.Columns.LATITUDE]) else None,
             float(row[constants.Columns.LONGITUDE]) if not pd.isna(row[constants.Columns.LONGITUDE]) else None,
             timezone_finder,
         ),
         axis=1,
-        result_type="expand",
     )
 
     if fill_missing is True or fill_missing == FillMissing.ENABLED:

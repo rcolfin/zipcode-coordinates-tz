@@ -8,7 +8,13 @@ from typing import TYPE_CHECKING, Any, cast
 import curl_cffi
 from aiofiles import tempfile
 from curl_cffi import requests
-from tenacity import retry, retry_if_exception, stop_after_attempt, stop_after_delay, wait_exponential
+from tenacity import (
+    retry,
+    retry_if_exception,
+    stop_after_attempt,
+    stop_after_delay,
+    wait_exponential,
+)
 
 from zipcode_coordinates_tz import constants
 
@@ -26,7 +32,7 @@ def _is_request_exception(e: BaseException) -> bool:
 @retry(
     retry=retry_if_exception(_is_request_exception),
     wait=wait_exponential(),
-    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRIES_TIME),
 )
 @asynccontextmanager
 async def get_json(session: requests.AsyncSession, url: str, params: dict[str, Any] | None = None) -> AsyncIterator[dict[str, Any]]:
@@ -35,7 +41,8 @@ async def get_json(session: requests.AsyncSession, url: str, params: dict[str, A
 
     Args:
         session (requests.AsyncSession): The Session.
-        url (str): The url to the file to download.
+        url (str): The URL to request.
+        params (dict[str, Any] | None): Optional query parameters.
 
     Returns:
         An Iterator that contains the json payload.
@@ -49,7 +56,7 @@ async def get_json(session: requests.AsyncSession, url: str, params: dict[str, A
 @retry(
     retry=retry_if_exception(_is_request_exception),
     wait=wait_exponential(),
-    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRIES_TIME),
 )
 @asynccontextmanager
 async def get_and_download_file(session: requests.AsyncSession, url: str) -> AsyncIterator[Path]:
@@ -86,16 +93,23 @@ async def get_and_download_file(session: requests.AsyncSession, url: str) -> Asy
 @retry(
     retry=retry_if_exception(_is_request_exception),
     wait=wait_exponential(),
-    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRY_TIME),
+    stop=stop_after_attempt(constants.MAX_RETRIES) | stop_after_delay(constants.MAX_RETRIES_TIME),
 )
 @asynccontextmanager
-async def post_and_download_file(session: requests.AsyncSession, url: str, params: dict[str, Any], mp: curl_cffi.CurlMime) -> AsyncIterator[Path]:
+async def post_and_download_file(
+    session: requests.AsyncSession,
+    url: str,
+    params: dict[str, Any],
+    mp: curl_cffi.CurlMime,
+) -> AsyncIterator[Path]:
     """
-    Downloads a file from the specified url and returns the Path.
+    POSTs a multipart form and downloads the response body to a temporary file.
 
     Args:
         session (requests.AsyncSession): The Session.
-        url (str): The url to the file to download.
+        url (str): The URL to POST to.
+        params (dict[str, Any]): Query parameters to include in the request.
+        mp (curl_cffi.CurlMime): The multipart form data to send.
 
     Returns:
         An Iterator that contains the Path to the downloaded file.
