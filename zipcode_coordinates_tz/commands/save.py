@@ -32,7 +32,7 @@ DATE_TIME_FMT: Final[str] = "%Y-%m-%d"
     is_flag=True,
     help="Flag indicating whether to fill in missing timezones with a value from their closest location.",
 )
-async def save(  # noqa: PLR0913
+async def save(  # noqa: PLR0913, PLR0917
     file: str,
     date: datetime.date | None,
     city: tuple[str, ...],
