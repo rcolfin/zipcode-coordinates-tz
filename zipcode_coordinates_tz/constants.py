@@ -1,10 +1,9 @@
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 import os
 from typing import Final
-
-import pytz
+from zoneinfo import ZoneInfo
 
 MAX_RETRIES: Final[int] = 3
 
@@ -14,7 +13,7 @@ BUFFER_LENGTH: Final[int] = 1024
 
 DEFAULT_VINTAGE: Final[str] = "Current_Current"
 
-DEFAULT_TIMEZONE: Final[datetime.tzinfo] = pytz.timezone("America/New_York")
+DEFAULT_TIMEZONE: Final[dt.tzinfo] = ZoneInfo("America/New_York")
 
 TRUTHY: Final[frozenset[str]] = frozenset(["true", "1"])
 
@@ -34,6 +33,6 @@ class Columns:
     TIMEZONE: Final[str] = "TZ"
 
 
-def get_date_in_ny() -> datetime.date:
+def get_date_in_ny() -> dt.date:
     """Gets the current date for the America/New_York timezone."""
-    return datetime.datetime.now(tz=DEFAULT_TIMEZONE).date()
+    return dt.datetime.now(tz=DEFAULT_TIMEZONE).date()

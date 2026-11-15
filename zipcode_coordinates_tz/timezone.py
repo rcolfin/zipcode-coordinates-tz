@@ -4,16 +4,16 @@ import contextlib
 import logging
 from functools import cache
 from typing import TYPE_CHECKING
+from zoneinfo import ZoneInfo, ZoneInfoNotFoundError
 
 import pandas as pd
-import pytz
 from timezonefinder import TimezoneFinder
 
 from zipcode_coordinates_tz import constants
 from zipcode_coordinates_tz.models import FillMissing
 
 if TYPE_CHECKING:
-    import datetime
+    import datetime as dt
 
 
 logger = logging.getLogger(__name__)
@@ -24,16 +24,16 @@ def _get_cached_timezone_finder() -> TimezoneFinder:
     return TimezoneFinder(bin_file_location=constants.TIMEZONE_FINDER_BIN_FILE_LOCATION, in_memory=constants.TIMEZONE_FINDER_IN_MEMORY)
 
 
-def _get_timezone(latitude: float | None, longitude: float | None, timezone_finder: TimezoneFinder) -> datetime.tzinfo | None:
+def _get_timezone(latitude: float | None, longitude: float | None, timezone_finder: TimezoneFinder) -> dt.tzinfo | None:
     if pd.isna(latitude) or pd.isna(longitude):
         return None
 
     assert latitude is not None  # noqa: S101
     assert longitude is not None  # noqa: S101
-    with contextlib.suppress(ValueError):
+    with contextlib.suppress(ValueError, ZoneInfoNotFoundError):
         zone = timezone_finder.timezone_at(lat=latitude, lng=longitude)
         if zone is not None:
-            return pytz.timezone(zone)
+            return ZoneInfo(zone)
 
     return None
 

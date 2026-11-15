@@ -19,9 +19,13 @@ If there is functionality that is missing or an error in the docs, please open a
     :maxdepth: 1
 
     zipcode_coordinates_tz/cenus
+    zipcode_coordinates_tz/commands
+    zipcode_coordinates_tz/constants
+    zipcode_coordinates_tz/http
     zipcode_coordinates_tz/models
     zipcode_coordinates_tz/postal
     zipcode_coordinates_tz/timezone
+    zipcode_coordinates_tz/utils
 
 Install
 -------

@@ -11,7 +11,7 @@ from zipcode_coordinates_tz.commands.common import cli
 from zipcode_coordinates_tz.models import FillMissing
 
 if TYPE_CHECKING:
-    import datetime
+    import datetime as dt
 
 logger = logging.getLogger(__name__)
 
@@ -32,9 +32,9 @@ DATE_TIME_FMT: Final[str] = "%Y-%m-%d"
     is_flag=True,
     help="Flag indicating whether to fill in missing timezones with a value from their closest location.",
 )
-async def save(  # noqa: PLR0913
+async def save(  # noqa: PLR0913, PLR0917
     file: str,
-    date: datetime.date | None,
+    date: dt.date | None,
     city: tuple[str, ...],
     state: tuple[str, ...] | None,
     zipcode: tuple[str, ...],
