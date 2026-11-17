@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 
 from zipcode_coordinates_tz import constants
 
@@ -55,15 +55,15 @@ class TestColumns:
 class TestGetDateInNY:
     def test_returns_date(self) -> None:
         result = constants.get_date_in_ny()
-        assert isinstance(result, datetime.date)
+        assert isinstance(result, dt.date)
 
     def test_not_datetime(self) -> None:
         result = constants.get_date_in_ny()
-        assert type(result) is datetime.date
+        assert type(result) is dt.date
 
     def test_is_recent(self) -> None:
         result = constants.get_date_in_ny()
-        today_utc = datetime.datetime.now(tz=datetime.timezone.utc).date()
+        today_utc = dt.datetime.now(tz=dt.timezone.utc).date()
         delta = abs((result - today_utc).days)
         # Should be within 1 day of UTC (accounting for timezone offset)
         assert delta <= 1

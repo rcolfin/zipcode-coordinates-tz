@@ -5,6 +5,8 @@ from typing import Final
 
 import pandas as pd
 
+from zipcode_coordinates_tz import constants
+
 logger = logging.getLogger(__name__)
 
 
@@ -15,6 +17,10 @@ def _save_csv(df: pd.DataFrame, file: Path) -> None:
 
 def _save_json(df: pd.DataFrame, file: Path) -> None:
     file.parent.mkdir(parents=True, exist_ok=True)
+    if constants.Columns.TIMEZONE in df.columns:
+        # zoneinfo.ZoneInfo serializes as {"key": ...}; keep the long-standing {"zone": ...} shape
+        # that pytz.timezone(...) produced so the saved file format doesn't change.
+        df = df.assign(**{constants.Columns.TIMEZONE: df[constants.Columns.TIMEZONE].map(lambda tz: {"zone": str(tz)} if pd.notna(tz) else None)})
     df.to_json(file, orient="records", index=False)
 
 

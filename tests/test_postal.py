@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-import datetime
+import datetime as dt
 import io
 import tempfile
 from contextlib import asynccontextmanager
@@ -51,7 +51,7 @@ class TestGetLocales:
             mock_session.__aexit__ = AsyncMock(return_value=False)
             mock_session_cls.return_value = mock_session
 
-            result = await postal.get_locales(datetime.date(2025, 1, 1))
+            result = await postal.get_locales(dt.date(2025, 1, 1))
 
         expected_columns = [
             constants.Columns.STREET,
@@ -81,7 +81,7 @@ class TestGetLocales:
             mock_session.__aexit__ = AsyncMock(return_value=False)
             mock_session_cls.return_value = mock_session
 
-            result = await postal.get_locales(datetime.date(2025, 1, 1))
+            result = await postal.get_locales(dt.date(2025, 1, 1))
 
         assert len(result) == 1
         assert result[constants.Columns.STREET].iloc[0] == "1 MAIN ST"

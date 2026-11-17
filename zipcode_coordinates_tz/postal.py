@@ -9,7 +9,7 @@ from curl_cffi import requests
 from zipcode_coordinates_tz import constants, http
 
 if TYPE_CHECKING:
-    import datetime
+    import datetime as dt
 
 logger = logging.getLogger(__name__)
 
@@ -31,12 +31,12 @@ _SHEET_NAME: Final[str] = "ZIP_DETAIL"
 _URL_FMT: Final[str] = "https://postalpro.usps.com/mnt/glusterfs/{YEAR:04}-{MONTH:02}/ZIP_Locale_Detail.xls"
 
 
-async def get_locales(date: datetime.date | None = None) -> pd.DataFrame:
+async def get_locales(date: dt.date | None = None) -> pd.DataFrame:
     """
     Queries US Postoffice for a DataFrame containing zip code to address, city and state.
 
     Args:
-        date (datetime.date | None): The date (defaults to today)
+        date (dt.date | None): The date (defaults to today)
 
     Returns:
         A DataFrame with the shape of
